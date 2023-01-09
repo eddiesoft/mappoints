@@ -1,9 +1,18 @@
 <template>
-  <l-map style="height: 100vh" :zoom="zoom" :center="defaultLocation">
-    <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-    <l-marker :lat-lng="defaultLocation"></l-marker>
-    <l-marker :lat-lng="user.location" :icon="user.icon"> ></l-marker>
-  </l-map>
+  <v-row>
+    <v-col>
+      <l-map
+        style="height: 100vh"
+        :min-zoom="minZoom"
+        :zoom="zoom"
+        :center="centerCameraLocation"
+      >
+        <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+        <l-marker :lat-lng="centerCameraLocation"></l-marker>
+        <l-marker :lat-lng="user.location" :icon="user.icon"> ></l-marker>
+      </l-map>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -13,7 +22,7 @@ import userIcon from "~/assets/icons/user.png";
 export default {
   data() {
     return {
-      defaultLocation: latLng(42.887063, 74.637918),
+      centerCameraLocation: latLng(42.887063, 74.637918),
       user: {
         location: latLng(42.887063, 74.637918),
         icon: icon({
@@ -22,6 +31,7 @@ export default {
         }),
       },
       zoom: 20,
+      minZoom: 6,
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -37,7 +47,6 @@ export default {
   },
 };
 </script>
-
 
 
 <!-- 

@@ -1,10 +1,6 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer
-      v-model="drawer"
-      fixed
-      app
-    >
+    <v-navigation-drawer v-model="drawer" fixed app>
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
@@ -45,7 +41,7 @@ export default {
           to: "/",
         },
       ],
-      title: "Map Point",
+      title: "Map Points",
     };
   },
 };
