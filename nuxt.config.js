@@ -48,6 +48,23 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     ['nuxt-leaflet', { /* module options */ }],
+    [
+      '@nuxtjs/firebase',
+      {
+        config: {
+          apiKey: "AIzaSyBJO6LtChyTD7Zu93CUW_cYMqn9mVmykhw",
+          authDomain: "paidproject-51fda.firebaseapp.com",
+          projectId: "paidproject-51fda",
+          storageBucket: "paidproject-51fda.appspot.com",
+          messagingSenderId: "514652524349",
+          appId: "1:514652524349:web:7706c07da594f15c227f54",
+          measurementId: "G-1E48YKMDPF"
+        },
+        services: {
+          firestore: true
+        }
+      }
+    ]
   ],
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

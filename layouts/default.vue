@@ -3,7 +3,7 @@
     <v-navigation-drawer v-model="drawer" fixed app>
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
+          v-for="(item, i) in drawerItems"
           :key="i"
           :to="item.to"
           router
@@ -34,11 +34,16 @@ export default {
   data() {
     return {
       drawer: false,
-      items: [
+      drawerItems: [
         {
-          icon: "mdi-apps",
-          title: "Welcome",
+          icon: "mdi-home-circle",
+          title: "Главная",
           to: "/",
+        },
+        {
+          icon: "mdi-login",
+          title: "Регистрация",
+          to: "/register",
         },
       ],
       title: "Map Points",
