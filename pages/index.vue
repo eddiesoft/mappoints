@@ -6,14 +6,17 @@
         :min-zoom="minZoom"
         :zoom="zoom"
         :center="user.location"
+        :options="{ zoomControl: false }"
         @contextmenu="onCreatePoint"
       >
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+        <l-control-zoom position="bottomright"></l-control-zoom>
         <l-moving-marker
           ref="userAniMarker"
           :lat-lng="user.location"
           :icon="user.icon"
           :duration="2000"
+          :options="{ pan: false }"
         ></l-moving-marker>
 
         <l-marker
