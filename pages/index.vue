@@ -6,33 +6,50 @@
         :min-zoom="minZoom"
         :zoom="zoom"
         :center="user.location"
+        @contextmenu="onCreatePoint"
       >
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-        <l-marker :lat-lng="centerCameraLocation"></l-marker>
         <l-moving-marker
           ref="userAniMarker"
           :lat-lng="user.location"
           :icon="user.icon"
           :duration="2000"
-        >
-          ></l-moving-marker
-        >
+        ></l-moving-marker>
+
+        <l-marker
+          v-for="(point, index) in createdPoints"
+          :key="index"
+          :lat-lng="point.latlng"
+        ></l-marker>
       </l-map>
+
+      <v-dialog
+        style="z-index: 10000"
+        v-model="dialog"
+        persistent
+        max-width="600px"
+      >
+        <add-new-point :callback="() => (dialog = false)" />
+      </v-dialog>
     </v-col>
   </v-row>
 </template>
 
 <script>
-import LMovingMarker from "vue2-leaflet-movingmarker";
 import { latLng, icon } from "leaflet";
 import userIcon from "~/assets/icons/user.png";
+import LMovingMarker from "vue2-leaflet-movingmarker";
+import AddNewPoint from "../components/add-new-point.vue";
 
 export default {
   components: {
     LMovingMarker,
+    AddNewPoint,
   },
   data() {
     return {
+      createdPoints: [],
+      dialog: false,
       centerCameraLocation: latLng(42.887063, 74.637918),
       user: {
         location: latLng(42.887063, 74.637918),
@@ -55,6 +72,14 @@ export default {
   },
   beforeDestroy() {
     navigator.geolocation.clearWatch(this.watchId);
+  },
+  methods: {
+    onCreatePoint(event) {
+      this.dialog = !this.dialog;
+      this.createdPoints.push({
+        latlng: event.latlng,
+      });
+    },
   },
 };
 </script>

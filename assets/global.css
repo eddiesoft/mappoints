@@ -1,0 +1,3 @@
+.onTopOfAllElements {
+    z-index: 10000;
+}

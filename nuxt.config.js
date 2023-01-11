@@ -13,7 +13,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - Map Points',
+    titleTemplate: '%s - Store Points',
     title: 'Map Points',
     htmlAttrs: {
       lang: 'en'
@@ -30,7 +30,7 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['leaflet/dist/leaflet.css'],
+  css: ['leaflet/dist/leaflet.css', '@/assets/global.css',],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [

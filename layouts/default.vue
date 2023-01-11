@@ -1,6 +1,12 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer v-model="drawer" fixed app>
+    <v-navigation-drawer
+      style="z-index: 10001"
+      v-model="drawer"
+      temporary
+      fixed
+      app
+    >
       <v-list>
         <v-list-item
           v-for="(item, i) in drawerItems"
@@ -18,7 +24,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar fixed app>
+    <v-app-bar style="z-index: 10000" fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>{{ title }}</v-toolbar-title>
     </v-app-bar>
