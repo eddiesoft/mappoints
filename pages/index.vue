@@ -7,7 +7,12 @@
         :zoom="zoom"
         :center="user.location"
         :options="{ zoomControl: false }"
-        @contextmenu="onCreatePoint"
+        @contextmenu="
+          (e) => {
+            isDialogOpen = true;
+            selectedPoint = e.latlng;
+          }
+        "
       >
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
         <l-control-zoom position="bottomright"></l-control-zoom>
@@ -20,7 +25,7 @@
         ></l-moving-marker>
 
         <l-marker
-          v-for="(point, index) in createdPoints"
+          v-for="(point, index) in points"
           :key="index"
           :lat-lng="point.latlng"
         ></l-marker>
@@ -32,7 +37,10 @@
         persistent
         max-width="600px"
       >
-        <add-new-point :closeDialog="() => (isDialogOpen = false)" />
+        <add-new-point
+          :closeDialog="() => (isDialogOpen = false)"
+          :createPoint="createPoint"
+        />
       </v-dialog>
     </v-col>
   </v-row>
@@ -51,9 +59,9 @@ export default {
   },
   data() {
     return {
-      createdPoints: [],
+      points: [],
       isDialogOpen: false,
-      centerCameraLocation: latLng(42.887063, 74.637918),
+      selectedPoint: null,
       user: {
         location: latLng(42.887063, 74.637918),
         icon: icon({
@@ -68,7 +76,10 @@ export default {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     };
   },
-  mounted() {
+  async created() {
+    this.fetchPoints();
+  },
+  async mounted() {
     this.watchId = navigator.geolocation.watchPosition((pos) => {
       this.user.location = latLng(pos.coords.latitude, pos.coords.longitude);
     });
@@ -77,11 +88,41 @@ export default {
     navigator.geolocation.clearWatch(this.watchId);
   },
   methods: {
-    onCreatePoint(event) {
-      this.isDialogOpen = !this.isDialogOpen;
-      this.createdPoints.push({
-        latlng: event.latlng,
+    async fetchPoints() {
+      const snapshot = await this.$fire.firestore.collection("points").get();
+      snapshot.docs.forEach((snapDoc) => {
+        const doc = snapDoc.data();
+        const geo = doc.latlng;
+
+        const pointObject = {
+          name: doc.name,
+          latlng: latLng(geo.latitude, geo.longitude),
+        };
+
+        this.points.push(pointObject);
       });
+    },
+    async createPoint({ pointName }) {
+      const pointGeo = {
+        latitude: this.selectedPoint.lat,
+        longitude: this.selectedPoint.lng,
+      };
+
+      const pointObject = {
+        name: pointName,
+        latlng: pointGeo,
+      };
+
+      try {
+        await this.$fire.firestore.collection("points").add(pointObject);
+        this.points.push({
+          name: pointName,
+          latlng: latLng(pointGeo.latitude, pointGeo.longitude),
+        });
+      } catch (e) {
+        console.error(`Firebase error: ${e}`);
+        alert(`Firebase error: ${e}`);
+      }
     },
   },
 };

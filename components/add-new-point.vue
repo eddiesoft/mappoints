@@ -33,6 +33,9 @@ export default {
     closeDialog: {
       type: Function,
     },
+    createPoint: {
+      type: Function,
+    },
   },
 
   validations: {
@@ -57,6 +60,7 @@ export default {
     save() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
+        this.createPoint({ pointName: this.pointName });
         this.$v.$reset();
         this.closeDialog();
       }
