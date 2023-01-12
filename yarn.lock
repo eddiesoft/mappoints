@@ -5859,6 +5859,11 @@ leaflet-geosearch@^3.7.0:
     "@googlemaps/js-api-loader" "^1.14.3"
     leaflet "^1.6.0"
 
+leaflet-moving-marker@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/leaflet-moving-marker/-/leaflet-moving-marker-0.3.0.tgz#c41645fc10be4b89183c9e2da569ec25b6a30d47"
+  integrity sha512-RgPAHt1ZErkiu3U2EuG522IAJIUwite35mgJ6bWZ2XvWkiaNnoAPQrr9OdpnU3Mu5Rl/aUtVKtibfxz6orda7Q==
+
 leaflet.marker.slideto@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/leaflet.marker.slideto/-/leaflet.marker.slideto-0.2.0.tgz#0191a7134c85ab57d1dd8efefc90abbe529888e9"
@@ -9667,6 +9672,11 @@ vue@^2.6.11, vue@^2.6.12, vue@^2.7.10:
   dependencies:
     "@vue/compiler-sfc" "2.7.14"
     csstype "^3.1.0"
+
+vuelidate@^0.7.7:
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/vuelidate/-/vuelidate-0.7.7.tgz#5df3930a63ddecf56fde7bdacea9dbaf0c9bf899"
+  integrity sha512-pT/U2lDI67wkIqI4tum7cMSIfGcAMfB+Phtqh2ttdXURwvHRBJEAQ0tVbUsW9Upg83Q5QH59bnCoXI7A9JDGnA==
 
 vuetify-loader@^1.7.3:
   version "1.9.2"

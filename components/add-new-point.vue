@@ -1,83 +1,129 @@
 <template>
-  <v-card>
-    <v-card-title>
-      <span class="text-h5">User Profile</span>
-    </v-card-title>
-    <v-card-text>
-      <v-container>
-        <v-row>
-          <v-col cols="12" sm="6" md="4">
-            <v-text-field label="Legal first name*" required></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6" md="4">
-            <v-text-field
-              label="Legal middle name"
-              hint="example of helper text only on focus"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6" md="4">
-            <v-text-field
-              label="Legal last name*"
-              hint="example of persistent helper text"
-              persistent-hint
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field label="Email*" required></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              label="Password*"
-              type="password"
-              required
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-select
-              :items="['0-17', '18-29', '30-54', '54+']"
-              label="Age*"
-              required
-            ></v-select>
-          </v-col>
-          <v-col cols="12" sm="6">
-            <v-autocomplete
-              :items="[
-                'Skiing',
-                'Ice hockey',
-                'Soccer',
-                'Basketball',
-                'Hockey',
-                'Reading',
-                'Writing',
-                'Coding',
-                'Basejump',
-              ]"
-              label="Interests"
-              multiple
-            ></v-autocomplete>
-          </v-col>
-        </v-row>
-      </v-container>
-      <small>*indicates required field</small>
-    </v-card-text>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn color="blue darken-1" text @click="callback()"> Close </v-btn>
-      <v-btn color="blue darken-1" text @click="callback()"> Save </v-btn>
-    </v-card-actions>
-  </v-card>
+  <form>
+    <v-card>
+      <v-card-title>
+        <span class="text-h5">Добавить точку</span>
+      </v-card-title>
+      <v-card-text>
+        <v-text-field
+          v-model="name"
+          :error-messages="nameErrors"
+          :counter="10"
+          label="Name"
+          required
+          @input="$v.name.$touch()"
+          @blur="$v.name.$touch()"
+        ></v-text-field>
+        <v-text-field
+          v-model="email"
+          :error-messages="emailErrors"
+          label="E-mail"
+          required
+          @input="$v.email.$touch()"
+          @blur="$v.email.$touch()"
+        ></v-text-field>
+        <v-select
+          v-model="select"
+          :items="items"
+          :error-messages="selectErrors"
+          label="Item"
+          required
+          @change="$v.select.$touch()"
+          @blur="$v.select.$touch()"
+        ></v-select>
+        <v-checkbox
+          v-model="checkbox"
+          :error-messages="checkboxErrors"
+          label="Do you agree?"
+          required
+          @change="$v.checkbox.$touch()"
+          @blur="$v.checkbox.$touch()"
+        ></v-checkbox>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" text @click="close"> Закрыть </v-btn>
+        <v-btn color="blue darken-1" text @click="save"> Сохранить </v-btn>
+      </v-card-actions>
+    </v-card>
+  </form>
 </template>
 
 <script>
+import { validationMixin } from "vuelidate";
+import { required, maxLength, email } from "vuelidate/lib/validators";
+
 export default {
+  mixins: [validationMixin],
   props: {
     callback: {
       type: Function,
     },
   },
-  data() {
-    return {};
+
+  validations: {
+    name: { required, maxLength: maxLength(10) },
+    email: { required, email },
+    select: { required },
+    checkbox: {
+      checked(val) {
+        return val;
+      },
+    },
+  },
+
+  data: () => ({
+    name: "",
+    email: "",
+    select: null,
+    items: ["Item 1", "Item 2", "Item 3", "Item 4"],
+    checkbox: false,
+  }),
+
+  computed: {
+    checkboxErrors() {
+      const errors = [];
+      if (!this.$v.checkbox.$dirty) return errors;
+      !this.$v.checkbox.checked && errors.push("You must agree to continue!");
+      return errors;
+    },
+    selectErrors() {
+      const errors = [];
+      if (!this.$v.select.$dirty) return errors;
+      !this.$v.select.required && errors.push("Item is required");
+      return errors;
+    },
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.name.$dirty) return errors;
+      !this.$v.name.maxLength &&
+        errors.push("Name must be at most 10 characters long");
+      !this.$v.name.required && errors.push("Name is required.");
+      return errors;
+    },
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.email && errors.push("Must be valid e-mail");
+      !this.$v.email.required && errors.push("E-mail is required");
+      return errors;
+    },
+  },
+
+  methods: {
+    save() {
+      this.$v.$touch();
+      this.$v.$reset();
+      this.callback();
+    },
+    close() {
+      this.$v.$reset();
+      this.name = "";
+      this.email = "";
+      this.select = null;
+      this.checkbox = false;
+      this.callback();
+    },
   },
 };
 </script>
