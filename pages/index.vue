@@ -9,13 +9,12 @@
         :options="{ zoomControl: false }"
         @contextmenu="
           (e) => {
-            isDialogOpen = true;
-            selectedPoint = e.latlng;
+            isCreatePointDialogOpen = true;
+            createdPointLatLng = e.latlng;
           }
         "
       >
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-        <l-control-zoom position="bottomright"></l-control-zoom>
         <l-moving-marker
           ref="userAniMarker"
           :lat-lng="user.location"
@@ -25,21 +24,34 @@
         ></l-moving-marker>
 
         <l-marker
-          v-for="(point, index) in points"
-          :key="index"
+          v-for="point in points"
+          :key="point.id"
           :lat-lng="point.latlng"
+          @click="() => viewPointDetails(point)"
         ></l-marker>
       </l-map>
 
       <v-dialog
         style="z-index: 10000"
-        v-model="isDialogOpen"
+        v-model="isCreatePointDialogOpen"
         persistent
         max-width="600px"
       >
         <add-new-point
-          :closeDialog="() => (isDialogOpen = false)"
+          :closeDialog="() => (isCreatePointDialogOpen = false)"
           :createPoint="createPoint"
+        />
+      </v-dialog>
+      <v-dialog
+        style="z-index: 10000"
+        v-model="isViewPointDetailsDialogOpen"
+        persistent
+        max-width="600px"
+      >
+        <view-point-details
+          :closeDialog="() => (isViewPointDetailsDialogOpen = false)"
+          :selectedPoint="selectedPoint"
+          :deletePoint="deletePoint"
         />
       </v-dialog>
     </v-col>
@@ -51,16 +63,20 @@ import { latLng, icon } from "leaflet";
 import userIcon from "~/assets/icons/user.png";
 import LMovingMarker from "vue2-leaflet-movingmarker";
 import AddNewPoint from "../components/add-new-point.vue";
+import ViewPointDetails from "../components/view-point-details.vue";
 
 export default {
   components: {
     LMovingMarker,
     AddNewPoint,
+    ViewPointDetails,
   },
   data() {
     return {
+      isCreatePointDialogOpen: false,
+      isViewPointDetailsDialogOpen: false,
       points: [],
-      isDialogOpen: false,
+      createdPointLatLng: null,
       selectedPoint: null,
       user: {
         location: latLng(42.887063, 74.637918),
@@ -95,6 +111,7 @@ export default {
         const geo = doc.latlng;
 
         const pointObject = {
+          id: snapDoc.id,
           name: doc.name,
           latlng: latLng(geo.latitude, geo.longitude),
         };
@@ -104,8 +121,8 @@ export default {
     },
     async createPoint({ pointName }) {
       const pointGeo = {
-        latitude: this.selectedPoint.lat,
-        longitude: this.selectedPoint.lng,
+        latitude: this.createdPointLatLng.lat,
+        longitude: this.createdPointLatLng.lng,
       };
 
       const pointObject = {
@@ -114,8 +131,11 @@ export default {
       };
 
       try {
-        await this.$fire.firestore.collection("points").add(pointObject);
+        const point = await this.$fire.firestore
+          .collection("points")
+          .add(pointObject);
         this.points.push({
+          id: point.id,
           name: pointName,
           latlng: latLng(pointGeo.latitude, pointGeo.longitude),
         });
@@ -123,6 +143,20 @@ export default {
         console.error(`Firebase error: ${e}`);
         alert(`Firebase error: ${e}`);
       }
+    },
+    async deletePoint(pointId) {
+      try {
+        await this.$fire.firestore.collection("points").doc(pointId).delete();
+        this.points = this.points.filter((e) => e.id != pointId);
+        this.isViewPointDetailsDialogOpen = false;
+      } catch (e) {
+        console.error(`Firebase error: ${e}`);
+        alert(`Firebase error: ${e}`);
+      }
+    },
+    viewPointDetails(point) {
+      this.selectedPoint = point;
+      this.isViewPointDetailsDialogOpen = true;
     },
   },
 };
