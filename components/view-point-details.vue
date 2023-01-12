@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="font-weight-bold text-h5">Информация о точке</span>
+      <span class="font-weight-bold text-h5">Информация о торговой точке</span>
     </v-card-title>
     <v-card-text>
       <v-card-subtitle class="card-sub-title card-title mt-6">

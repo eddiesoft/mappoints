@@ -2,13 +2,13 @@
   <form>
     <v-card>
       <v-card-title>
-        <span class="text-h5">Добавить точку</span>
+        <span class="text-h5">Добавить торговую точку</span>
       </v-card-title>
       <v-card-text>
         <v-text-field
           v-model="pointName"
           :error-messages="pointNameErrors"
-          label="Название точки"
+          label="Название торговой точки"
           required
           @input="$v.pointName.$touch()"
           @blur="$v.pointName.$touch()"
@@ -65,7 +65,7 @@ export default {
       const errors = [];
       if (!this.$v.pointName.$dirty) return errors;
       !this.$v.pointName.required &&
-        errors.push('Поле "Название точки" не должно быть пустым!');
+        errors.push('Поле "Название торговой точки" не должно быть пустым!');
       return errors;
     },
     authorNameErrors() {
