@@ -17,7 +17,23 @@
       </v-card-subtitle>
       <v-card-title class="card-sub-title card-subtitle">
         <span>
-          {{ selectedPoint.name }}
+          {{ selectedPoint.pointName }}
+        </span>
+      </v-card-title>
+      <v-card-subtitle class="card-sub-title card-title mt-5">
+        <span>Автор:</span>
+      </v-card-subtitle>
+      <v-card-title class="card-sub-title card-subtitle">
+        <span>
+          {{ selectedPoint.authorName }}
+        </span>
+      </v-card-title>
+      <v-card-subtitle class="card-sub-title card-title mt-5">
+        <span>Время создания:</span>
+      </v-card-subtitle>
+      <v-card-title class="card-sub-title card-subtitle">
+        <span>
+          {{ formattedDateTime }}
         </span>
       </v-card-title>
       <v-card-subtitle class="card-sub-title card-title mt-5">
@@ -54,6 +70,23 @@ export default {
     },
     deletePoint: {
       type: Function,
+    },
+  },
+  computed: {
+    formattedDateTime() {
+      const addZero = (value) => String(value).padStart(2, "0");
+      const date = new Date(this.selectedPoint.createdAt);
+
+      const dateFormat = date.toLocaleDateString("ru-RU", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      const timeFormat = `${addZero(date.getHours())}:${addZero(
+        date.getMinutes()
+      )}:${addZero(date.getSeconds())}`;
+
+      return `${dateFormat} ${timeFormat}`;
     },
   },
 };

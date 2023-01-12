@@ -15,13 +15,12 @@
         "
       >
         <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-        <l-moving-marker
-          ref="userAniMarker"
+        <l-marker
           :lat-lng="user.location"
           :icon="user.icon"
           :duration="2000"
           :options="{ pan: false }"
-        ></l-moving-marker>
+        ></l-marker>
 
         <l-marker
           v-for="point in points"
@@ -79,23 +78,21 @@ export default {
       createdPointLatLng: null,
       selectedPoint: null,
       user: {
-        location: latLng(42.887063, 74.637918),
+        location: latLng(42.870454, 74.598038),
         icon: icon({
           iconUrl: userIcon,
           iconSize: [32, 32],
         }),
       },
-      zoom: 20,
+      zoom: 13,
       minZoom: 6,
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     };
   },
-  async created() {
-    this.fetchPoints();
-  },
   async mounted() {
+    this.fetchPoints();
     this.watchId = navigator.geolocation.watchPosition((pos) => {
       this.user.location = latLng(pos.coords.latitude, pos.coords.longitude);
     });
@@ -112,22 +109,28 @@ export default {
 
         const pointObject = {
           id: snapDoc.id,
-          name: doc.name,
+          pointName: doc.pointName,
+          authorName: doc.authorName,
+          createdAt: doc.createdAt,
           latlng: latLng(geo.latitude, geo.longitude),
         };
 
         this.points.push(pointObject);
       });
     },
-    async createPoint({ pointName }) {
-      const pointGeo = {
+    async createPoint({ pointName, authorName }) {
+      const createdAt = Date.now();
+
+      const latlng = {
         latitude: this.createdPointLatLng.lat,
         longitude: this.createdPointLatLng.lng,
       };
 
       const pointObject = {
-        name: pointName,
-        latlng: pointGeo,
+        pointName,
+        authorName,
+        createdAt,
+        latlng,
       };
 
       try {
@@ -136,8 +139,10 @@ export default {
           .add(pointObject);
         this.points.push({
           id: point.id,
-          name: pointName,
-          latlng: latLng(pointGeo.latitude, pointGeo.longitude),
+          pointName,
+          authorName,
+          createdAt,
+          latlng: latLng(latlng.latitude, latlng.longitude),
         });
       } catch (e) {
         console.error(`Firebase error: ${e}`);
