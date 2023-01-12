@@ -28,11 +28,11 @@
 
       <v-dialog
         style="z-index: 10000"
-        v-model="dialog"
+        v-model="isDialogOpen"
         persistent
         max-width="600px"
       >
-        <add-new-point :callback="() => (dialog = false)" />
+        <add-new-point :closeDialog="() => (isDialogOpen = false)" />
       </v-dialog>
     </v-col>
   </v-row>
@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       createdPoints: [],
-      dialog: false,
+      isDialogOpen: false,
       centerCameraLocation: latLng(42.887063, 74.637918),
       user: {
         location: latLng(42.887063, 74.637918),
@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     onCreatePoint(event) {
-      this.dialog = !this.dialog;
+      this.isDialogOpen = !this.isDialogOpen;
       this.createdPoints.push({
         latlng: event.latlng,
       });
