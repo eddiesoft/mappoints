@@ -84,8 +84,8 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         await this.createPoint({
-          pointName: this.pointName,
-          authorName: this.authorName,
+          pointName: this.pointName.trim(),
+          authorName: this.authorName.trim(),
         });
         this.close();
       }
